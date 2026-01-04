@@ -7,7 +7,7 @@ const cache_1 = require("../cache");
 class StyleCompletionItemProvider {
     constructor() {
         this._CSSLanguageService = vscode_css_languageservice_1.getCSSLanguageService();
-        this._expression = /(\/\*\s*(style)\s*\*\/\s*`|(?<!`)style\s*`)([^`]*)(`)/gi;
+        this._expression = /(\/\*\s*(style)\s*\*\/\s*`|(?<!`)style(?:\s*<[^<>]*>)?\s*(?:`|=\s*"))([^`]*)(`|")/gi;
         this._cache = new cache_1.CompletionsCache();
         this._substitutionExpression = /\$\{.*?\}/;
     }
@@ -40,10 +40,12 @@ class StyleCompletionItemProvider {
             matchContent = matchContent.replace(m[0], sub);
         }
         const matchStartOffset = match.index + match[1].length;
+        console.log(match.index, matchStartOffset, match);
         const matchEndOffset = match.index + match[0].length;
         const matchPosition = document.positionAt(matchStartOffset);
         const virtualOffset = currentOffset - matchStartOffset + 8; // accounting for :host { }
-        const virtualDocument = util_1.CreateVirtualDocument("css", `:host { ${matchContent} }`);
+        console.log(virtualOffset);
+        const virtualDocument = util_1.CreateVirtualDocument("css", `:host {\n${matchContent}\n}`);
         const vCss = this._CSSLanguageService.parseStylesheet(virtualDocument);
         const emmetResults = {
             isIncomplete: true,
@@ -61,7 +63,7 @@ class StyleCompletionItemProvider {
 		const rangeOffset = matchPosition.line !== position.line ? 0 : matchPosition.character;
         return {
             isIncomplete: completions.isIncomplete,
-            items: util_1.TranslateCompletionItems(completions.items, currentLine, rangeOffset)
+            items: util_1.TranslateCompletionItems(completions.items, currentLine, false, rangeOffset)
         };
     }
     resolveCompletionItem(item, _token) {

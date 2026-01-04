@@ -60,9 +60,10 @@ class HTMLStyleCompletionItemProvider {
             completions.isIncomplete = true;
         }
         this._cache.updateCached(document, position, completions);
+        const rangeOffset = matchPosition.line !== position.line ? 0 : matchPosition.character;
         return {
             isIncomplete: completions.isIncomplete,
-            items: util_1.TranslateCompletionItems(completions.items, currentLine)
+            items: util_1.TranslateCompletionItems(completions.items, currentLine, false, rangeOffset)
         };
     }
     resolveCompletionItem(item, _token) {
