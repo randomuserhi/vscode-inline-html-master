@@ -7,7 +7,7 @@ const cache_1 = require("../cache");
 class StyleCompletionItemProvider {
     constructor() {
         this._CSSLanguageService = vscode_css_languageservice_1.getCSSLanguageService();
-        this._expression = /(\/\*\s*(style)\s*\*\/\s*`|(?<!`)style(?:\s*<[^<>]*>)?\s*(?:`|=\s*"))([^`]*)(`|")/gi;
+        this._expression = /(\/\*\s*(style)\s*\*\/\s*`|(?<!`)(?:\s+|^)style(?:\s*<[^<>]*>)?\s*(?:`|=\s*"))([^`]*)(`|")/gi;
         this._cache = new cache_1.CompletionsCache();
         this._substitutionExpression = /\$\{.*?\}/;
     }
